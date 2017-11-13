@@ -1,0 +1,18 @@
+
+CREATE TABLE IF NOT EXISTS `todo` (
+	`id` INT(15) NOT NULL AUTO_INCREMENT,
+	`parent` INT(15) NULL,
+	`name` VARCHAR(1000) NOT NULL,
+	`desc` VARCHAR(2500) NULL,
+	`entered_at` DATE NOT NULL,
+	`completed_at` DATE NULL,
+	PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `users` (
+	`id` INT(15) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(50) NOT NULL,
+	`email` VARCHAR(50) NOT NULL UNIQUE KEY,
+	`password` VARCHAR(100) NOT NULL,
+	PRIMARY KEY (`id`)
+);
