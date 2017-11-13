@@ -1,10 +1,12 @@
 
-function app(){}
+function app(){
+	this.bk = new BrosKeeper();
+}
 
 app.prototype.check_session = function(){
 	let _this = this;
 	return new Promise(done=>{
-		this.api({action:"check_session"}).then((resp)=>{
+		_this.bk.api({action:"check_session"}).then((resp)=>{
 			if(!resp.success) _this.login().then(done);
 			else done();
 		});
@@ -31,18 +33,15 @@ app.prototype.login = function(){
 app.prototype.loginModalSubmit = function(){
 	let _this = this;
 	return new Promise(done=>
-		_this.api({
-			action: "check_login",
-			email: $("#login-email-input").val(),
-			pass: $("#login-password-input").val()
-		}).then(resp=>{
-			if(!resp.success) $("#login-error-alert").html(resp.response).slideDown();
-			else {
-				_this.closeModals();
-				//_this.removeHTML('modal', 'login');
-				done();
-			}
-		}));
+		_this.bk.login($("#login-email-input").val(), $("#login-password-input").val())
+			.then(resp=>{
+				if(!resp.success) $("#login-error-alert").html(resp.response).slideDown();
+				else {
+					_this.closeModals();
+					_this.removeHTML('modal', 'login');
+					done();
+				}
+			}));
 };
 
 app.prototype.removeHTML = function(type, view){
@@ -57,15 +56,6 @@ app.prototype.loadHTML = function(type, view){
 			let $d = $(html).prop("id", type+"-"+view).appendTo("body");
 			done($d);
 		});
-	});
-};
-
-app.prototype.api = function(data){
-	return new Promise(done=>{
-		$.ajax({
-			url: "./app/api.php",
-			data: data
-		}).done(done);
 	});
 };
 

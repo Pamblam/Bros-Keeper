@@ -60,8 +60,8 @@ function output(){
 }
 
 function getCurrentUser(){
-	global $_SESSION;
+	var_dump($_SESSION); exit;
 	global $FP;
-	if(empty($_SESSION['user_id'])) error("Please log in.");
+	if(!isset($_SESSION['user_id'])) error("Please log in.");
 	return new User($FP->db, $_SESSION['user_id']);
 }
