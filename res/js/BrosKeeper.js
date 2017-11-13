@@ -15,7 +15,8 @@ BrosKeeper.prototype.api = function(data){
 		for (let n in data) if (data.hasOwnProperty(n)) body.append(n, data[n]);
 		fetch('./app/api.php', {
 			method: 'post',
-			body: body
+			body: body,
+			credentials: 'include'
 		})
 		.then(resp => resp.json())
 		.then(done);

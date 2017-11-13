@@ -36,6 +36,12 @@ switch($_REQUEST['action']){
 		$return['data'] = $user;
 		output();
 		break;
+		
+	case "logout":
+		$_SESSION = array();
+		session_destroy();
+		output();
+		break;
 	
 	default: error("Error: invalid action parameter");
 }
@@ -49,7 +55,7 @@ function checkParams($reqd){
 function error($oopsie){
 	$GLOBALS['return']['response'] = $oopsie;
 	$GLOBALS['return']['success'] = false;
-	$GLOBALS['return']['data'] = array();;
+	$GLOBALS['return']['data'] = array();
 	output();
 }
 
@@ -60,7 +66,6 @@ function output(){
 }
 
 function getCurrentUser(){
-	var_dump($_SESSION); exit;
 	global $FP;
 	if(!isset($_SESSION['user_id'])) error("Please log in.");
 	return new User($FP->db, $_SESSION['user_id']);

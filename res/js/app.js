@@ -1,6 +1,7 @@
 
 function app(){
 	this.bk = new BrosKeeper();
+	this.setGlobalEventHandlers();
 }
 
 app.prototype.check_session = function(){
@@ -10,6 +11,13 @@ app.prototype.check_session = function(){
 			if(!resp.success) _this.login().then(done);
 			else done();
 		});
+	});
+};
+
+app.prototype.logout = function(){
+	let _this = this;
+	return new Promise(done=>{
+		_this.bk.api({action:"logout"}).then(resp=>location.reload());
 	});
 };
 
@@ -24,7 +32,7 @@ app.prototype.login = function(){
 				keyboard: false
 			});
 			$("#login-submit").click(()=>{
-				_this.loginModalSubmit();
+				_this.loginModalSubmit().then(done);
 			});
 		});
 	});
@@ -64,4 +72,11 @@ app.prototype.closeModals = function(){
 	$('body').removeClass('modal-open');
 	$('.modal-backdrop').remove();
 	$('.modal').remove();
+};
+
+app.prototype.setGlobalEventHandlers = function(){
+	let _this = this;
+	$(document).on("click", ".log-out", function(){
+		_this.logout();
+	});
 };
