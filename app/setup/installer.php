@@ -171,7 +171,7 @@ function confirmPurgeDB(&$pdo, $name){
 }
 
 function initDatabase(&$pdo){
-	$sql = file_get_contents("setup.sql");
+	$sql = file_get_contents(realpath(dirname(__FILE__))."/setup.sql");
 	if(empty($sql)){
 		echo "\n\n! Error: setup.sql missing or empty !";
 		exit;
