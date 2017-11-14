@@ -59,9 +59,14 @@ app.prototype.removeHTML = function(type, view){
 app.prototype.loadHTML = function(type, view){
 	return new Promise(done=>{
 		$.ajax({
-			url: "./res/html/"+type+"s/"+view+".html"
+			url: "./res/html/"+type+"s/"+view+".html",
+			data: {_: new Date().getTime()}
 		}).done(html=>{
-			let $d = $(html).prop("id", type+"-"+view).appendTo("body");
+			let $d = $(html).prop("id", type+"-"+view);
+			switch(type){
+				case "modal": $d.appendTo("body"); break;
+				case "page": $("#page-container").html($d); break;
+			}
 			done($d);
 		});
 	});
@@ -74,9 +79,31 @@ app.prototype.closeModals = function(){
 	$('.modal').remove();
 };
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Events //////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 app.prototype.setGlobalEventHandlers = function(){
+	this.setLogoutHandler();
+	this.setPageLinkHandler();
+};
+
+app.prototype.setLogoutHandler = function(){
 	let _this = this;
 	$(document).on("click", ".log-out", function(){
 		_this.logout();
+	});
+};
+
+app.prototype.setPageLinkHandler = function(){
+	let _this = this;
+	$(document).on("click", "[data-page-link]", function(e){
+		e.preventDefault();
+		$(".navbar-collapse").collapse('hide');
+		let page = $(this).data("page-link");
+		_this.loadHTML('page', 'to-do').then(()=>{
+			if(_this[page] !== undefined) new _this[page](_this);
+		});
 	});
 };

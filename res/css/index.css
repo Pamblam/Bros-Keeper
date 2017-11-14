@@ -8,3 +8,27 @@ body {
 		padding-top: 56px;
 	}
 }
+
+.bootstrap-tagsinput{
+	border-radius:0 3px 3px 0;
+}
+
+.CodeMirror {
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  padding: 6px 12px;
+  height: auto;
+}
+
+.toggle-handle{
+	border: 1px solid #ced4da;
+}
+
+.toggle-handle{
+	border: 1px solid #ced4da;
+	background: #e9ecef;
+}
+
+.toggle{
+	border: 1px solid #ced4da;
+}

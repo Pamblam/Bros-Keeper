@@ -1,0 +1,74 @@
+<div class="modal fade">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"><i class="fa fa-plus-square" aria-hidden="true"></i> To-do item</h5>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				
+				<ul class="nav nav-tabs">
+					<li class="active nav-item">
+						<a data-toggle="tab" href="#edit-todo-item-tab" class="nav-link">
+							<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit
+						</a>
+					</li>
+					<li class="nav-item">
+						<a data-toggle="tab" href="#preview-todo-item-tab" class="nav-link">
+							<i class="fa fa-eye" aria-hidden="true"></i> Preview
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div id="edit-todo-item-tab" class="tab-pane fade in active">
+						<div style="height:.5em"></div>
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="fa fa-cubes" aria-hidden="true"></i>
+							</span>
+							<input type="text" class="form-control" placeholder="Title">
+						</div>
+						<div style="height:.5em"></div>
+						<div>
+							<div style="float:left;">
+								<b><i class="fa fa-level-down" aria-hidden="true"></i> Details</b>
+							</div>
+							<div style="float:right;">
+								<small><i>(Markdown enabled - <a href="#" id="todo-add-image"><i class="fa fa-picture-o" aria-hidden="true"></i> Add Image</a>)</i></small>
+							</div>
+							<div style="clear:both;"></div>
+						</div>
+						<textarea id="edit-todo-details-input"></textarea>
+						<div style="height:.5em"></div>
+						<div class="row">
+							<div class="col-6">
+								<input type="checkbox" id="to-do-detail-completed-input">
+							</div>
+							<div class="col-6">
+								<div class="input-group">
+									<span class="input-group-addon">
+										<i class="fa fa-hourglass-half" aria-hidden="true"></i>
+									</span>
+									<input type="text" class="form-control" id="due-date-picker" placeholder="Due Date">
+								</div>
+							</div>
+						</div>
+						<div style="height:.5em"></div>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-tag" aria-hidden="true"></i></span>
+							<input type="text" class="form-control" id="todo-item-tags-input" placeholder="Comma separated tags">
+						</div>
+					</div>
+					<div id="preview-todo-item-tab" class="tab-pane fade">
+						<h3>preview</h3>
+					</div>
+				</div>	
+				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default"><i class="fa fa-close" aria-hidden="true"></i> Cancel</button>
+				<button type="button" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> OK</button>
+			</div>
+		</div>
+	</div>
+</div>
