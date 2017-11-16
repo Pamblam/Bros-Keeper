@@ -27,7 +27,15 @@ $key = getInput("\n - Enter an encryption key (you don't need to remember this, 
 
 echo <<<ooo
 
- Step 3. Creating the tables
+ Step 3. APIs
+
+ooo;
+
+$imgur_client_id = getInput("\n - Set up your app on Imgur (https://imgur.com/account/settings/apps) and then enter the Client ID: ");
+
+echo <<<ooo
+
+ Step 4. Creating the tables
 
 ooo;
 
@@ -36,17 +44,17 @@ initDatabase($pdo);
 echo <<<ooo
 
 
- Step 4. Writing the ini file
+ Step 5. Writing the ini file
 
 ooo;
 
-initConfig($mysql['input'], $db, $key);
+initConfig($mysql['input'], $db, $key, $imgur_client_id);
 $SETTINGS = getSettings();
 
 echo <<<ooo
 
 
- Step 5. Create a user account
+ Step 6. Create a user account
 
 ooo;
 
@@ -99,14 +107,15 @@ function getUserAccountInput(){
 	);
 }
 
-function initConfig($mysql, $db, $key){
+function initConfig($mysql, $db, $key, $imgur_client_id){
 	$path = realpath(dirname(dirname(__FILE__)))."/config.ini";
 	$s = writeINIFile(array(
 		"_MYSQL_HOST" => $mysql['host'],
 		"_MYSQL_USER" => $mysql['user'],
 		"_MYSQL_PASS" => $mysql['password'],
 		"_MYSQL_DB" => $db,
-		"_CRYPTOKEY" => trim($key)
+		"_CRYPTOKEY" => trim($key),
+		"_IMGUR_CLIENT_ID" => trim($imgur_client_id)
 	), $path);
 	if(!$s){
 		echo "\n\n!! Could not write to config file at $path - ensure appropriate permissions. !!\n";
@@ -142,12 +151,12 @@ function gatherMySQLInput(){
 function getValidatedDBFromUser(&$pdo){
 	$in = gatherDBInput();
 	if(!$in['exists'] && !createDB($pdo, $in['name'])){
-		echo "\n\n! Error: Could not create the database with the given user. Please create the database manually with the root user and try again or try again using an existing database that this user has permission to access !";
+		echo "\n\n!! Error: Could not create the database with the given user. Please create the database manually with the root user and try again or try again using an existing database that this user has permission to access !!";
 		exit;
 	}
 	//if($in['exists'] && confirmPurgeDB($pdo, $in['name'])) $in['exists'] = false;
 	if(!useDB($pdo, $in['name'])){
-		echo "\n\n! Error: Could not validate the database with the given user. Please create the database with the root user and try again or try again using an existing database that this user has permission to access !";
+		echo "\n\n!! Error: Could not validate the database with the given user. Please create the database with the root user and try again or try again using an existing database that this user has permission to access !!";
 		exit;
 	}
 	return $in['name'];
@@ -173,13 +182,13 @@ function confirmPurgeDB(&$pdo, $name){
 function initDatabase(&$pdo){
 	$sql = file_get_contents(realpath(dirname(__FILE__))."/setup.sql");
 	if(empty($sql)){
-		echo "\n\n! Error: setup.sql missing or empty !";
+		echo "\n\n!! Error: setup.sql missing or empty !!";
 		exit;
 	}
 	try{
 		$pdo->exec($sql);
 	}catch(PDOException $e){
-		echo "\n\n! Error: Could not create tables !";
+		echo "\n\n!! Error: Could not create tables !!";
 		exit;
 	}
 	echo "\n - Database initialized :)\n - Tables created :P";

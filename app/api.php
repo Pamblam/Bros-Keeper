@@ -43,6 +43,16 @@ switch($_REQUEST['action']){
 		output();
 		break;
 	
+	case "upload_img":
+		require "functions/imgur_anon_upload.php";
+		$SETTINGS['_IMGUR_CLIENT_ID'];
+		foreach($_FILES['fileUploadFiles']['tmp_name'] as $img_path){
+			$url = imgur_anon_upload($client_id, $img_path);
+			if($url !== false) $return['data'][] = $url;
+		}
+		output();
+		break;
+	
 	default: error("Error: invalid action parameter");
 }
 
