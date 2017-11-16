@@ -5,7 +5,9 @@ CREATE TABLE IF NOT EXISTS `todo` (
 	`name` VARCHAR(1000) NOT NULL,
 	`desc` VARCHAR(2500) NULL,
 	`entered_at` DATE NOT NULL,
+	`due_date` DATE NULL,
 	`completed_at` DATE NULL,
+	`tags` VARCHAR(2500) NULL,
 	PRIMARY KEY (`id`)
 );
 
