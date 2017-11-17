@@ -45,7 +45,7 @@ switch($_REQUEST['action']){
 	
 	case "upload_img":
 		require "functions/imgur_anon_upload.php";
-		$SETTINGS['_IMGUR_CLIENT_ID'];
+		$client_id = $SETTINGS['_IMGUR_CLIENT_ID'];
 		foreach($_FILES['fileUploadFiles']['tmp_name'] as $img_path){
 			$url = imgur_anon_upload($client_id, $img_path);
 			if($url !== false) $return['data'][] = $url;
