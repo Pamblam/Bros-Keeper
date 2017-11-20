@@ -35,7 +35,20 @@
 				});
 				$('#todo-item-tags-input').tagsinput();
 				_this.setAddImageHandler();
+				_this.setPreviewHandler();
 			});
+		});
+	};
+	
+	p.setPreviewHandler = function(){
+		let _this = this;
+		$('a[href="#preview-todo-item-tab"]').on('show.bs.tab', function(e){
+			let title = $("#todo-title-input").val(),
+				details_md = _this.editor.getValue(),
+				completed = $("#to-do-detail-completed-input").is(":checked"),
+				due_date = $("#due-date-picker").val(),
+				tags = $("#todo-item-tags-input").tagsinput('items');
+			if(title.trim() == '') title = 'Untitled';
 		});
 	};
 	

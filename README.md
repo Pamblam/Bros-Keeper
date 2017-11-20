@@ -24,3 +24,4 @@ Point your browser to: `http://yourserver/Bros-Keeper` and log in with the detai
  - [this fork](https://github.com/Nodws/bootstrap4-tagsinput) of bs4 tagsinput
  - [bstoggle](http://www.bootstraptoggle.com/)
  - [bsdatepicker](https://github.com/eternicode/bootstrap-datepicker)
+ - [showdown](http://showdownjs.com/) md fucker-upper
