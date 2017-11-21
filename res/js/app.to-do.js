@@ -49,6 +49,21 @@
 				due_date = $("#due-date-picker").val(),
 				tags = $("#todo-item-tags-input").tagsinput('items');
 			if(title.trim() == '') title = 'Untitled';
+			let subtitle = completed ? "(Completed "+formatDate(new Date(), "m/d/y")+")" : "(Pending)";
+			if(!completed && due_date !== "") subtitle = "(Pending - Due "+due_date+")";
+			let html = new showdown.Converter().makeHtml(details_md);
+			tags = '<span class="badge badge-info">'+tags.join('</span> <span class="badge badge-info">')+'</span>';
+			let template = `<div class="card" style=padding:3px;margin-top:3px>
+				<div class="card-block">
+					<h4 class="card-title">${title}</h4>
+					<h6 class="card-subtitle mb-2 text-muted">${subtitle}</h6>
+					${html}
+					<div>${tags}</div>
+				</div>
+			</div>`;
+			template = $(template);
+			template.find("img").addClass("img-fluid");
+			$("#preview-todo-item-tab").html(template);
 		});
 	};
 	
