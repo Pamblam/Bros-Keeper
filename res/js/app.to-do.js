@@ -3,14 +3,52 @@
 	
 	app.prototype['to-do'] = function(app){
 		this.app = app;
-		this.setEvents();
 		this.editor = null;
+		let _this = this;
+		this.drawItems().then(()=>{
+			_this.setEvents();
+		});
 	};
 	
 	let p = app.prototype['to-do'].prototype;
 	
 	p.setEvents = function(){
 		this.setAddItemHandler();
+		this.setCloseTodoModalHandler();
+		this.setSaveItemHandler();
+	};
+	
+	p.setCloseTodoModalHandler = function(){
+		let _this = this;
+		$(document).on('click', '.close-todo-modal', function(){
+			_this.app.closeModals();
+			_this.removeHTML('modal', 'to-do');
+		});
+	};
+	
+	p.setSaveItemHandler = function(){
+		let _this = this;
+		$(document).on('click', '.saveTodoItem', function(){
+			let parent = 0,
+				title = $("#todo-title-input").val(),
+				details_md = _this.editor.getValue(),
+				due_date = $("#due-date-picker").val(),
+				completed = $("#to-do-detail-completed-input").is(":checked"),
+				tags = $("#todo-item-tags-input").tagsinput('items');
+			if(title.trim() == '') title = 'Untitled';
+			_this.app.bk.addTodo(parent, title, details_md, due_date, completed, tags).then(()=>{
+				_this.app.closeModals();
+				_this.removeHTML('modal', 'to-do');
+				_this.drawItems();
+			});
+		});
+	};
+	
+	p.drawItems = function(){
+		return new Promise(done=>{
+			// do stuff to draw the items on the to-do list
+			done();
+		});
 	};
 	
 	p.setAddItemHandler = function(){
@@ -49,7 +87,7 @@
 				due_date = $("#due-date-picker").val(),
 				tags = $("#todo-item-tags-input").tagsinput('items');
 			if(title.trim() == '') title = 'Untitled';
-			let subtitle = completed ? "(Completed "+formatDate(new Date(), "m/d/y")+")" : "(Pending)";
+			let subtitle = completed ? "<span style=color:green>(Completed "+formatDate(new Date(), "m/d/y")+")</span>" : "<span style=color:red>(Pending)</span>";
 			if(!completed && due_date !== "") subtitle = "(Pending - Due "+due_date+")";
 			let html = new showdown.Converter().makeHtml(details_md);
 			tags = '<span class="badge badge-info">'+tags.join('</span> <span class="badge badge-info">')+'</span>';

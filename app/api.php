@@ -53,6 +53,11 @@ switch($_REQUEST['action']){
 		output();
 		break;
 	
+	case "add_todo":
+		// Do stuff to save the to-do list item to mysql
+		output();
+		break;
+		
 	default: error("Error: invalid action parameter");
 }
 
