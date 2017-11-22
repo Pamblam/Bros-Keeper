@@ -1,6 +1,7 @@
 
 CREATE TABLE IF NOT EXISTS `todo` (
 	`id` INT(15) NOT NULL AUTO_INCREMENT,
+	`user_id` INT(15) NOT NULL,
 	`parent` INT(15) NULL,
 	`name` VARCHAR(1000) NOT NULL,
 	`desc` VARCHAR(2500) NULL,

@@ -7,8 +7,8 @@ require "classes/Crypto.php";
 require "classes/BrosKeeper.php";
 require "classes/User.php";
 
-$FP = new BrosKeeper();
-$SETTINGS = $FP->SETTINGS;
+$BK = new BrosKeeper();
+$SETTINGS = $BK->SETTINGS;
 
 // Create the return array
 $return = array(
@@ -30,7 +30,7 @@ switch($_REQUEST['action']){
 	case "check_login":
 		checkParams(array("email", "pass"));
 		$pass = Crypto::encrypt($_REQUEST['pass']);
-		$user = User::validateLogin($FP->db, $_REQUEST['email'], $pass);
+		$user = User::validateLogin($BK->db, $_REQUEST['email'], $pass);
 		if(false === $user) error("Invalid email or password.");
 		$_SESSION['user_id'] = $user->id;
 		$return['data'] = $user;
@@ -54,7 +54,10 @@ switch($_REQUEST['action']){
 		break;
 	
 	case "add_todo":
-		// Do stuff to save the to-do list item to mysql
+		checkParams(array('parent', 'title', 'desc', 'due', 'completed', 'tags'));
+		$user = getCurrentUser();
+		
+		
 		output();
 		break;
 		
@@ -81,7 +84,7 @@ function output(){
 }
 
 function getCurrentUser(){
-	global $FP;
+	global $BK;
 	if(!isset($_SESSION['user_id'])) error("Please log in.");
-	return new User($FP->db, $_SESSION['user_id']);
+	return new User($BK->db, $_SESSION['user_id']);
 }

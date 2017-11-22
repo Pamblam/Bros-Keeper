@@ -19,6 +19,8 @@ class BrosKeeper {
 		)->db;
 	}
 	
-	
+	public function add_todo($user, $parent, $title, $desc, $due, $completed, $tags){
+		$this->db->prepare("INSERT INTO `todo` (`user_id`, `parent`, `name`, `desc`, `entered_at`, `due_date`, `completed_at`, `tags`) VALUES (?, ?, ?, ?, ?, ?, ?)");
+	}
 	
 }
