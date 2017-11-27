@@ -38,16 +38,50 @@
 			if(title.trim() == '') title = 'Untitled';
 			_this.app.bk.addTodo(parent, title, details_md, due_date, completed, tags).then(()=>{
 				_this.app.closeModals();
-				_this.removeHTML('modal', 'to-do');
+				_this.app.removeHTML('modal', 'to-do');
 				_this.drawItems();
 			});
 		});
 	};
 	
+	p.appendTDItem = function($list, item){
+		$item = $("<li>");
+		let subtitle = item.completed ? "<span style=color:green>(Completed "+item.completed+")</span>" : "<span style=color:red>(Pending)</span>";
+		let html = new showdown.Converter().makeHtml(item.desc);
+		let tags = '<span class="badge badge-info">'+item.tags.join('</span> <span class="badge badge-info">')+'</span>';
+		let template = `<li><div class="card" style=padding:3px;margin-top:3px>
+				<div class="card-block">
+					<h4 class="card-title">${item.name}</h4>
+					<h6 class="card-subtitle mb-2 text-muted">${subtitle}</h6>
+					${html}
+					<div>${tags}</div>
+					<div class=children></div>
+				</div>
+			</div></li>`;
+		template = $(template);
+		template.find("img").addClass("img-fluid");
+		if(item.children.length){
+			$childList = $("<ul>");
+			this.appendTDItem($childList, item.children);
+			template.find(".children").append($childList);
+		}
+		$list.append(template);
+	};
+	
 	p.drawItems = function(){
+		let _this = this;
 		return new Promise(done=>{
-			// do stuff to draw the items on the to-do list
-			done();
+			_this.app.bk.getTodos().then(todos=>{
+				if(!todos.data.length){
+					$("#to-do-list-items").html('<i>Nothing here...</i>');
+					done();
+					return;
+				}
+				let $list = $("<ul>");
+				for(let i = 0; i < todos.data.length; i++)
+					_this.appendTDItem($list, todos.data[i]);
+				done();
+			});
 		});
 	};
 	
@@ -87,7 +121,7 @@
 				due_date = $("#due-date-picker").val(),
 				tags = $("#todo-item-tags-input").tagsinput('items');
 			if(title.trim() == '') title = 'Untitled';
-			let subtitle = completed ? "<span style=color:green>(Completed "+formatDate(new Date(), "m/d/y")+")</span>" : "<span style=color:red>(Pending)</span>";
+			let subtitle = completed ? "<span style=color:green>(Completed "+formatDate(new Date(), "Y-m-d")+")</span>" : "<span style=color:red>(Pending)</span>";
 			if(!completed && due_date !== "") subtitle = "(Pending - Due "+due_date+")";
 			let html = new showdown.Converter().makeHtml(details_md);
 			tags = '<span class="badge badge-info">'+tags.join('</span> <span class="badge badge-info">')+'</span>';

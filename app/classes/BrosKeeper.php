@@ -34,6 +34,22 @@ class BrosKeeper {
 		return !!$q->execute($params);
 	}
 	
+	public function get_todos($user, $parent=null){
+		if(empty($user) || empty($user->id)) return false;
+		$parent = is_numeric($parent) ? $parent : null;
+		$user_id = $user->id;
+		$q = $this->db->prepare("SELECT * FROM `todo` WHERE `user_id` = ? and `parent` = ? OR (`parent` IS NULL AND ? IS NULL)");
+		$q->execute(array($user_id, $parent, $parent));
+		$todos = array();
+		while($td = $q->fetch(PDO::FETCH_ASSOC)){
+			$td['children'] = empty($td['parent']) ? array() : $this->get_todos($user, $td['parent']);
+			$td['tags'] = empty($td['tags']) ? array() : explode(",", $td['tags']);
+			$td['tags'] = array_map('trim', $td['tags']);
+			unset($td['parent']);
+		}
+		return $todos;
+	}
+	
 	public static function getInsertableDate($date){
 		if(empty($date)) return null;
 		$chunks = explode("/", $date);

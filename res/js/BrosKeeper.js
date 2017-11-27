@@ -9,6 +9,12 @@ BrosKeeper.prototype.login = function(email, password){
 	});
 };
 
+BrosKeeper.prototype.getTodos = function(){
+	return this.api({
+		action: "get_todos"
+	});
+};
+
 BrosKeeper.prototype.addTodo = function(parent, title, desc, due, completed, tags){
 	return this.api({
 		action: "add_todo",
