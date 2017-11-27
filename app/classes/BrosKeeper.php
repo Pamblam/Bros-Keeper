@@ -6,6 +6,7 @@ class BrosKeeper {
 	public $SETTINGS = null;
 	public $config = null;
 	public $db = null;
+	public $errors = array();
 	
 	public function __construct() {
 		$this->APP_PATH = realpath(dirname(dirname(__FILE__)));
@@ -20,7 +21,27 @@ class BrosKeeper {
 	}
 	
 	public function add_todo($user, $parent, $title, $desc, $due, $completed, $tags){
-		$this->db->prepare("INSERT INTO `todo` (`user_id`, `parent`, `name`, `desc`, `entered_at`, `due_date`, `completed_at`, `tags`) VALUES (?, ?, ?, ?, ?, ?, ?)");
+		if(empty($user) || empty($user->id)) return false;
+		$user_id = $user->id;
+		$parent = is_numeric($parent) ? $parent : null;
+		if(empty($title)) $title = "Undefined";
+		if(empty($desc)) $desc = "";
+		$due = self::getInsertableDate($due);
+		$completed = "false" !== $completed && !empty($completed) ? $completed = date("Y-m-d") : null;
+		$created = date("Y-m-d");
+		$params = array($user_id, $parent, $title, $desc, $created, $due, $completed, $tags);
+		$q = $this->db->prepare("INSERT INTO `todo` (`user_id`, `parent`, `name`, `desc`, `entered_at`, `due_date`, `completed_at`, `tags`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+		return !!$q->execute($params);
+	}
+	
+	public static function getInsertableDate($date){
+		if(empty($date)) return null;
+		$chunks = explode("/", $date);
+		if(count($chunks) !== 3) return null;
+		if(strlen($chunks[0]) !== 2) return null;
+		if(strlen($chunks[1]) !== 2) return null;
+		if(strlen($chunks[2]) !== 4) return null;
+		return "{$chunks[2]}-{$chunks[0]}-{$chunks[1]}";
 	}
 	
 }

@@ -29,7 +29,7 @@
 	p.setSaveItemHandler = function(){
 		let _this = this;
 		$(document).on('click', '.saveTodoItem', function(){
-			let parent = 0,
+			let parent = null,
 				title = $("#todo-title-input").val(),
 				details_md = _this.editor.getValue(),
 				due_date = $("#due-date-picker").val(),

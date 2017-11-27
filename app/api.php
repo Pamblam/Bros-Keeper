@@ -56,8 +56,9 @@ switch($_REQUEST['action']){
 	case "add_todo":
 		checkParams(array('parent', 'title', 'desc', 'due', 'completed', 'tags'));
 		$user = getCurrentUser();
-		
-		
+		$q = $BK->add_todo($user, $_REQUEST['parent'], $_REQUEST['title'], $_REQUEST['desc'], $_REQUEST['due'], $_REQUEST['completed'], $_REQUEST['tags']);
+		$msg = count($BK->errors) > 0 ? $BK->errors[0] : "wtfCould not add to-do item.";
+		if(!$q) error($msg);
 		output();
 		break;
 		
