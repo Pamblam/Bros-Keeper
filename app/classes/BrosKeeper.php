@@ -46,6 +46,7 @@ class BrosKeeper {
 			$td['tags'] = empty($td['tags']) ? array() : explode(",", $td['tags']);
 			$td['tags'] = array_map('trim', $td['tags']);
 			unset($td['parent']);
+			$todos[] = $td;
 		}
 		return $todos;
 	}
