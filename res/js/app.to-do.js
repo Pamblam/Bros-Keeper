@@ -46,24 +46,28 @@
 	
 	p.appendTDItem = function($list, item){
 		let parent_id = $list.prop('id');
-		let subtitle = item.completed ? "<span style=color:green>(Completed "+item.completed+")</span>" : "<span style=color:red>(Pending)</span>";
+		let checked = item.completed_at ? "checked" : "";
+		let subtitle = item.completed_at ? "<span style=color:green>(Completed "+item.completed_at+")</span>" : "<span style=color:red>(Pending)</span>";
+		if(!item.completed_at && item.due_date !== "") subtitle = "<span style=color:red>(Pending - Due "+item.due_date+")</span>";
 		let html = new showdown.Converter().makeHtml(item.desc);
 		let tags = '<span class="badge badge-info">'+item.tags.join('</span> <span class="badge badge-info">')+'</span>';
 		let template = `<div class="card" style=padding:3px;margin-top:3px>
 				<div class="card-header" id="todo_header_${item.id}">
-					<h5 class="mb-0">
+					<h5 class="mb-0 float-left">
 						<a class=collapsed data-toggle="collapse" data-parent="#${parent_id}" href="#collapse_td_${item.id}" aria-expanded="true" aria-controls="collapse_td_${item.id}">
 							${item.name}
 						</a>
 					</h5>
-					<div style='font-size:0.6em' class=float-right>${subtitle}</div>
+					<div style='font-size:0.6em' class='float-right'>${subtitle} <button class='btn btn-sm btn-primary'>Edit</button></div>
 				</div>
-				<div id="collapse_td_${item.id}" class="collapse show" role="tabpanel" aria-labelledby="todo_header_${item.id}">
-					<div class="card-block">
+				<div id="collapse_td_${item.id}" class="collapse" role="tabpanel" aria-labelledby="todo_header_${item.id}">
+					<div class="card-block" style='padding: 12px 20px'>
 						${html}
-						<div>${tags}</div>
-						<div class=children></div>
 					</div>
+					<div class="card-footer">
+						<div><span style=font-size:75%>Tagged: </span>${tags}</div>
+					</div>
+					<div class=children></div>
 				</div>
 			</div>`;
 		template = $(template);
