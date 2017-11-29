@@ -45,23 +45,31 @@
 	};
 	
 	p.appendTDItem = function($list, item){
-		$item = $("<li>");
+		let parent_id = $list.prop('id');
 		let subtitle = item.completed ? "<span style=color:green>(Completed "+item.completed+")</span>" : "<span style=color:red>(Pending)</span>";
 		let html = new showdown.Converter().makeHtml(item.desc);
 		let tags = '<span class="badge badge-info">'+item.tags.join('</span> <span class="badge badge-info">')+'</span>';
-		let template = `<li><div class="card" style=padding:3px;margin-top:3px>
-				<div class="card-block">
-					<h4 class="card-title">${item.name}</h4>
-					<h6 class="card-subtitle mb-2 text-muted">${subtitle}</h6>
-					${html}
-					<div>${tags}</div>
-					<div class=children></div>
+		let template = `<div class="card" style=padding:3px;margin-top:3px>
+				<div class="card-header" id="todo_header_${item.id}">
+					<h5 class="mb-0">
+						<a class=collapsed data-toggle="collapse" data-parent="#${parent_id}" href="#collapse_td_${item.id}" aria-expanded="true" aria-controls="collapse_td_${item.id}">
+							${item.name}
+						</a>
+					</h5>
+					<div style='font-size:0.6em' class=float-right>${subtitle}</div>
 				</div>
-			</div></li>`;
+				<div id="collapse_td_${item.id}" class="collapse show" role="tabpanel" aria-labelledby="todo_header_${item.id}">
+					<div class="card-block">
+						${html}
+						<div>${tags}</div>
+						<div class=children></div>
+					</div>
+				</div>
+			</div>`;
 		template = $(template);
 		template.find("img").addClass("img-fluid");
 		if(item.children.length){
-			$childList = $("<ul>");
+			$childList = $("<ul style=list-style-type:none>");
 			this.appendTDItem($childList, item.children);
 			template.find(".children").append($childList);
 		}
@@ -77,9 +85,10 @@
 					done();
 					return;
 				}
-				let $list = $("<ul>");
+				let $list = $('<div id="accordion-top-level" role="tablist" aria-multiselectable="true">');
 				for(let i = 0; i < todos.data.length; i++)
 					_this.appendTDItem($list, todos.data[i]);
+				$("#to-do-list-items").empty().append($list);
 				done();
 			});
 		});
