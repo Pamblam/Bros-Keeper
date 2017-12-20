@@ -14,6 +14,29 @@ app.prototype.check_session = function(){
 	});
 };
 
+app.prototype.warningConfirm = function(text){
+	var _this = this;
+	return new Promise(function(done){
+		_this.loadHTML('modal', 'warning-confirm').then($d=>{
+			$d.modal({show: true, backdrop: 'static'});
+			console.log($("#warning-confirm-text").length, text);
+			$("#warning-confirm-text").html(text);
+			$("#warning-confirm-ok").click(function(e){
+				e.preventDefault();
+				_this.closeModals();
+				_this.removeHTML('modal', 'warning-confirm');
+				done(true);
+			});
+			$("#warning-confirm-cancel").click(function(e){
+				e.preventDefault();
+				_this.closeModals();
+				_this.removeHTML('modal', 'warning-confirm');
+				done(false);
+			});
+		});
+	});
+};
+
 app.prototype.logout = function(){
 	let _this = this;
 	return new Promise(done=>{

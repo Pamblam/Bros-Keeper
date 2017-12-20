@@ -62,6 +62,15 @@ switch($_REQUEST['action']){
 		output();
 		break;
 		
+	case "delete_todo":
+		checkParams(array('id'));
+		$user = getCurrentUser();
+		$q = $BK->delete_todo($user, $_REQUEST['id']);
+		$msg = count($BK->errors) > 0 ? $BK->errors[0] : "Could not delete to-do item.";
+		if(!$q) error($msg);
+		output();
+		break;
+		
 	case "get_todos":
 		$user = getCurrentUser();
 		$q = $BK->get_todos($user);

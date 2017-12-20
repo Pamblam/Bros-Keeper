@@ -46,9 +46,18 @@
 	
 	p.appendTDItem = function($list, item){
 		let parent_id = $list.prop('id');
-		let checked = item.completed_at ? "checked" : "";
 		let subtitle = item.completed_at ? "<span style=color:green>(Completed "+item.completed_at+")</span>" : "<span style=color:red>(Pending)</span>";
-		if(!item.completed_at && item.due_date !== "") subtitle = "<span style=color:red>(Pending - Due "+item.due_date+")</span>";
+		if(!item.completed_at && !!item.due_date) subtitle = "<span style=color:red>(Pending - Due "+item.due_date+")</span>";
+		else if(!item.completed_at) subtitle = "<span style=color:red>(Pending)</span>";
+		
+		var headerButtons = ["<button class='btn btn-sm btn-primary edit-item-button' data-item-id='"+item.id+"'><i class='fa fa-pencil-square-o' aria-hidden='true'></i></button>"];
+		if(!item.completed_at){
+			headerButtons.push("<button class='btn btn-sm btn-success complete-item-button' data-item-id='"+item.id+"'><i class='fa fa-check-square-o'></i></button>");
+			headerButtons.push("<button class='btn btn-sm btn-info add-child-button' data-item-id='"+item.id+"'><i class='fa fa-plus-square-o'></i></button>");
+		}
+		headerButtons.unshift("<button class='btn btn-sm btn-danger delete-item-button-"+item.id+"'><i class='fa fa-trash-o'></i></button>");
+		headerButtons = headerButtons.join('');
+		
 		let html = new showdown.Converter().makeHtml(item.desc);
 		let tags = '<span class="badge badge-info">'+item.tags.join('</span> <span class="badge badge-info">')+'</span>';
 		let template = `<div class="card" style=padding:3px;margin-top:3px>
@@ -58,7 +67,7 @@
 							${item.name}
 						</a>
 					</h5>
-					<div style='font-size:0.6em' class='float-right'>${subtitle} <button class='btn btn-sm btn-primary'>Edit</button></div>
+					<div style='font-size:0.6em' class='float-right'>${subtitle} <div class="btn-group" role="group">${headerButtons}</div></div>
 				</div>
 				<div id="collapse_td_${item.id}" class="collapse" role="tabpanel" aria-labelledby="todo_header_${item.id}">
 					<div class="card-block" style='padding: 12px 20px'>
@@ -78,6 +87,23 @@
 			template.find(".children").append($childList);
 		}
 		$list.append(template);
+		this.setItemDeleteHandler($list, item.id);
+	};
+	
+	p.setItemDeleteHandler = function($root, id){
+		var _this = this;
+		$root.on('click', ".delete-item-button-"+id, function(e){
+			e.preventDefault();
+			var msg = 'Are you sure you want to delete this item <b>and ALL of it\'s children?</b>';
+			_this.app.warningConfirm(msg).then(function(res){
+				if(!res) return;
+				_this.app.bk.deleteTodo(id).then(()=>{
+					_this.drawItems().then(()=>{
+						_this.setEvents();
+					});
+				});
+			});
+		});
 	};
 	
 	p.drawItems = function(){

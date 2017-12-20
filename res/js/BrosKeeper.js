@@ -27,6 +27,13 @@ BrosKeeper.prototype.addTodo = function(parent, title, desc, due, completed, tag
 	});
 };
 
+BrosKeeper.prototype.deleteTodo = function(id){
+	return this.api({
+		action: "delete_todo",
+		id: id
+	});
+};
+
 BrosKeeper.prototype.api = function(data){
 	return new Promise(done=>{
 		let body = new FormData();

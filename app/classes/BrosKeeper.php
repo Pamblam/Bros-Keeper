@@ -34,6 +34,14 @@ class BrosKeeper {
 		return !!$q->execute($params);
 	}
 	
+	public function delete_todo($user, $id){
+		if(empty($user) || empty($user->id)) return false;
+		$user_id = $user->id;
+		$q = $this->db->prepare("DELETE FROM `todo` WHERE `user_id` = ? and (`id` = ? OR `parent` = ?)");
+		$params = array($user->id, $id, $id);
+		return !!$q->execute($params);
+	}
+	
 	public function get_todos($user, $parent=null){
 		if(empty($user) || empty($user->id)) return false;
 		$parent = is_numeric($parent) ? $parent : null;
