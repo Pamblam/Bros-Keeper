@@ -15,6 +15,18 @@ BrosKeeper.prototype.getTodos = function(){
 	});
 };
 
+BrosKeeper.prototype.editTodo = function(id, title, desc, due, completed, tags){
+	return this.api({
+		action: "edit_todo",
+		id: id,
+		title: title,
+		desc: desc,
+		due: due,
+		completed: completed,
+		tags: tags
+	});
+};
+
 BrosKeeper.prototype.addTodo = function(parent, title, desc, due, completed, tags){
 	return this.api({
 		action: "add_todo",

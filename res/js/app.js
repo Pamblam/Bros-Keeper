@@ -19,7 +19,6 @@ app.prototype.warningConfirm = function(text){
 	return new Promise(function(done){
 		_this.loadHTML('modal', 'warning-confirm').then($d=>{
 			$d.modal({show: true, backdrop: 'static'});
-			console.log($("#warning-confirm-text").length, text);
 			$("#warning-confirm-text").html(text);
 			$("#warning-confirm-ok").click(function(e){
 				e.preventDefault();
