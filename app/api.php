@@ -62,6 +62,15 @@ switch($_REQUEST['action']){
 		output();
 		break;
 		
+	case "edit_todo":
+		checkParams(array('id', 'title', 'desc', 'due', 'completed', 'tags'));
+		$user = getCurrentUser();
+		$q = $BK->edit_todo($user, $_REQUEST['id'], $_REQUEST['title'], $_REQUEST['desc'], $_REQUEST['due'], $_REQUEST['completed'], $_REQUEST['tags']);
+		$msg = count($BK->errors) > 0 ? $BK->errors[0] : "Could not edit to-do item.";
+		if(!$q) error($msg);
+		output();
+		break;
+		
 	case "delete_todo":
 		checkParams(array('id'));
 		$user = getCurrentUser();

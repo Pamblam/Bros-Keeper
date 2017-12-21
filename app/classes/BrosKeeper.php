@@ -34,10 +34,23 @@ class BrosKeeper {
 		return !!$q->execute($params);
 	}
 	
+	public function edit_todo($user, $id, $title, $desc, $due, $completed, $tags){
+		if(empty($user) || empty($user->id)) return false;
+		$user_id = $user->id;
+		if(empty($title)) $title = "Undefined";
+		if(empty($desc)) $desc = "";
+		$due = self::getInsertableDate($due);
+		$completed = "false" !== $completed && !empty($completed) ? $completed = date("Y-m-d") : null;
+		$created = date("Y-m-d");
+		$params = array($title, $desc, $created, $due, $completed, $tags, $user_id, $id);
+		$q = $this->db->prepare("UPDATE `todo` SET `name` = ?, `desc` = ?, `entered_at` = ?, `due_date` = ?, `completed_at` = ?, `tags` = ? WHERE `user_id` = ? AND `id` = ?");
+		return !!$q->execute($params);
+	}
+	
 	public function delete_todo($user, $id){
 		if(empty($user) || empty($user->id)) return false;
 		$user_id = $user->id;
-		$q = $this->db->prepare("DELETE FROM `todo` WHERE `user_id` = ? and (`id` = ? OR `parent` = ?)");
+		$q = $this->db->prepare("DELETE FROM `todo` WHERE `user_id` = ? AND (`id` = ? OR `parent` = ?)");
 		$params = array($user->id, $id, $id);
 		return !!$q->execute($params);
 	}
@@ -50,7 +63,7 @@ class BrosKeeper {
 		$q->execute(array($user_id, $parent, $parent));
 		$todos = array();
 		while($td = $q->fetch(PDO::FETCH_ASSOC)){
-			$td['children'] = empty($td['parent']) ? array() : $this->get_todos($user, $td['parent']);
+			$td['children'] = $this->get_todos($user, $td['id']);
 			$td['tags'] = empty($td['tags']) ? array() : explode(",", $td['tags']);
 			$td['tags'] = array_map('trim', $td['tags']);
 			unset($td['parent']);

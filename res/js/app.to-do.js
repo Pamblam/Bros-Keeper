@@ -25,10 +25,10 @@
 		});
 	};
 	
-	p.setSaveItemHandler = function(){
+	p.setSaveItemHandler = function(parentID){
 		let _this = this;
 		$('.saveTodoItem').click(function(){
-			let parent = null,
+			let parent = parentID || null,
 				title = $("#todo-title-input").val(),
 				details_md = _this.editor.getValue(),
 				due_date = $("#due-date-picker").val(),
@@ -75,19 +75,58 @@
 					<div class="card-footer">
 						<div><span style=font-size:75%>Tagged: </span>${tags}</div>
 					</div>
-					<div class=children></div>
 				</div>
+				<div id="accordion-level-${item.id}" role="tablist" aria-multiselectable="true" style=margin-left:1em;>
 			</div>`;
 		template = $(template);
 		template.find("img").addClass("img-fluid");
 		if(item.children.length){
-			$childList = $("<ul style=list-style-type:none>");
-			this.appendTDItem($childList, item.children);
-			template.find(".children").append($childList);
+			$childList = template.find("#accordion-level-"+item.id);
+			for(var i=0; i<item.children.length; i++) 
+				this.appendTDItem($childList, item.children[i]);
 		}
 		$list.append(template);
 		this.setItemDeleteHandler($list, item.id);
 		this.setItemEditHandler($list, item);
+		this.setItemCompletedHandler($list, item);
+		this.setItemNewChildHandler($list, item.id);
+	};
+	
+	p.setItemNewChildHandler = function($root, parentId){
+		var _this = this;
+		$root.on('click', ".add-child-button-"+parentId, function(e){
+			e.preventDefault();
+			_this.initTodoItemModal().then(()=>{
+				_this.setSaveItemHandler(parentId);
+			});
+		});
+	};
+	
+	p.setItemCompletedHandler = function($root, item){
+		var _this = this;
+		$root.on('click', ".complete-item-button-"+item.id, function(e){
+			e.preventDefault();
+			_this.app.bk.editTodo(item.id, item.name, item.desc, item.due_date, formatDate(new Date(), 'm/d/Y'), item.tags)
+				.then(_this.drawItems());
+		});
+	};
+	
+	p.setItemEditHandler = function($root, item){
+		var _this = this;
+		$root.on('click', ".edit-item-button-"+item.id, function(e){
+			e.preventDefault();
+			_this.initTodoItemModal().then(()=>{
+				$("#todo-title-input").val(item.name);
+				_this.editor.getDoc().setValue(item.desc);
+				$("#to-do-detail-completed-input").bootstrapToggle(item.completed_at ? 'on' : 'off');
+				if(item.due_date){
+					var dateParts = item.due_date.split("-");
+					$("#due-date-picker").val(dateParts[1]+"/"+dateParts[2]+"/"+dateParts[0]);
+				}
+				for(var i=0; i<item.tags.length; i++) $("#todo-item-tags-input").tagsinput('add', item.tags[i]);
+				_this.setSaveEditedItemHandler(item.id);
+			});
+		});
 	};
 	
 	p.setItemDeleteHandler = function($root, id){
@@ -117,24 +156,6 @@
 				_this.app.closeModals();
 				_this.app.removeHTML('modal', 'to-do');
 				_this.drawItems();
-			});
-		});
-	};
-	
-	p.setItemEditHandler = function($root, item){
-		var _this = this;
-		$root.on('click', ".edit-item-button-"+item.id, function(e){
-			e.preventDefault();
-			_this.initTodoItemModal().then(()=>{
-				$("#todo-title-input").val(item.name);
-				_this.editor.getDoc().setValue(item.desc);
-				$("#to-do-detail-completed-input").bootstrapToggle(item.completed_at ? 'on' : 'off');
-				if(item.due_date){
-					var dateParts = item.due_date.split("-");
-					$("#due-date-picker").val(dateParts[1]+"/"+dateParts[2]+"/"+dateParts[0]);
-				}
-				for(var i=0; i<item.tags.length; i++) $("#todo-item-tags-input").tagsinput('add', item.tags[i]);
-				_this.setSaveEditedItemHandler(item.id);
 			});
 		});
 	};
